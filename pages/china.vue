@@ -2,7 +2,7 @@
   <div>
     <b-card
       title="China"
-      img-src=""
+      :img-src="flag"
       img-alt="Image"
       img-top
       tag="article"
@@ -33,6 +33,7 @@ export default {
   async created() {
     const data = await this.$axios.$get("https://disease.sh/v3/covid-19/countries/china")
     this.cases = data.cases
+    this.flag = data.countryInfo.flag
   }
 
 }

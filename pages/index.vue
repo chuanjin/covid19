@@ -4,35 +4,8 @@
       <b-row>
         <b-col>
           <ul>
-            <li>
-              <NuxtLink to="/china">China</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">US</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">UK</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">Canada</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">Germany</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">France</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">Italy</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">Australia</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">Sweden</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/">India</NuxtLink>
+            <li v-for="country in labels">
+              <NuxtLink :to="country">{{ country }} </NuxtLink>
             </li>
           </ul>
         </b-col>
@@ -55,7 +28,7 @@ export default {
     return {
       loaded: false,
       chartdata: null,
-      labels: ['China', 'US', 'UK', 'Canada', 'Germany', 'France', 'Italy', 'Australia', 'Sweden', 'Inida' ],
+      labels: ['China', 'US', 'UK', 'Canada', 'Germany', 'France', 'Italy', 'Australia', 'Sweden', 'India' ],
       options: {
         scales: {
           yAxes: [{
@@ -70,33 +43,20 @@ export default {
 
   async mounted() {
     this.loaded = false
+    this.vaccine = []
     try {
-      var data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/China?lastdays=1")
-      const vaccine_China = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/us?lastdays=1")
-      const vaccine_US = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/uk?lastdays=1")
-      const vaccine_UK = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/canada?lastdays=1")
-      const vaccine_Canada = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/germany?lastdays=1")
-      const vaccine_Germany = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/france?lastdays=1")
-      const vaccine_France = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/italy?lastdays=1")
-      const vaccine_Italy = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/australia?lastdays=1")
-      const vaccine_Australia = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/sweden?lastdays=1")
-      const vaccine_Sweden = Object.values(data['timeline'])[0]
-      data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/india?lastdays=1")
-      const vaccine_India = Object.values(data['timeline'])[0]
+      for (let country of this.labels) {
+        var data = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/" + country + "?lastdays=1")
+        const vaccine = Object.values(data['timeline'])[0]
+        this.vaccine.push(vaccine)
+      }
+
       this.chartdata = {
         labels: this.labels,
         datasets: [{
           label: 'Vaccination',
           barPercentage: 0.8,
-          data: [vaccine_China, vaccine_US, vaccine_UK, vaccine_Canada, vaccine_Germany, vaccine_France, vaccine_Italy, vaccine_Australia, vaccine_Sweden, vaccine_India],
+          data: this.vaccine,
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(255, 159, 64, 0.2)',

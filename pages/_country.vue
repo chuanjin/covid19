@@ -5,7 +5,7 @@
         <b-row>
           <b-col>
             <b-card
-              title="China"
+              :title="country"
               :img-src="flag"
               img-alt="Image"
               img-top
@@ -55,14 +55,15 @@ export default {
       todayCases: 0,
       todayDeaths: 0,
       todayRecovered: 0,
-      flag: ""
+      flag: "",
+      country: this.$route.params.country
     }
   },
 
   async mounted() {
     this.loaded = false
     try {
-      const data = await this.$axios.$get("https://disease.sh/v3/covid-19/countries/china")
+      const data = await this.$axios.$get("https://disease.sh/v3/covid-19/countries/" + this.country)
       this.population = data.population
       this.cases = data.cases
       this.todayCases = data.todayCases
@@ -72,7 +73,7 @@ export default {
       this.todayRecovered = data.todayRecovered
       this.flag = data.countryInfo.flag
 
-      const vdata = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/china?lastdays=5")
+      const vdata = await this.$axios.$get("https://disease.sh/v3/covid-19/vaccine/coverage/countries/" + this.country + "?lastdays=5")
       const vaccinations = Object.values(vdata['timeline'])
       const labels = Object.keys(vdata['timeline'])
       this.chartdata = {
